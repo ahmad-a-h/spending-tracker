@@ -1,13 +1,15 @@
 import React from 'react';
 import AddPaymentForm from './AddPaymentForm';
 import PaymentList from './PaymentList';
+import TotalMoney from './TotalMoney';
+import SpendingOverview from './SpendingOverview';
 
 const Dashboard = () => {
   return (
-    <div>
-      <h1>Spending Tracker</h1>
-      <AddPaymentForm />
-      <PaymentList />
+    <div className="h-full overflow-y-auto mx-auto p-5 bg-white shadow-md rounded-lg w-full">
+      <TotalMoney />
+      <SpendingOverview />
+      {/* <AddPaymentForm /> */}
       {/* Add charts and spending summary here */}
     </div>
   );
