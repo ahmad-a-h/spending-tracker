@@ -40,8 +40,11 @@
 .read-the-docs {
   color: #888;
 }
-.ant-select-selector {
-  border: none !important; /* Remove border */
-  background: #e5e7eb !important; /* Tailwind gray-200 */
-  border-radius: 20px !important; /* Match rounded corners */
+.select-design {
+  background-color: #E0ECFF;
+}
+.ant-selectselector  .ant-select-selector{
+  border-radius: 9999px;
+    background-color: rgb(229 231 235) !important;
+    width: 40%;
 }
