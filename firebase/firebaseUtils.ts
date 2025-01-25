@@ -36,8 +36,8 @@ export const getPayments = async (): Promise<Payment[]> => {
     }
 };
 
-export const getWeeklySpendingData = async (): Promise<number[]> => {
-    const payments = await getPayments();
+export const getWeeklySpendingData = async (month: number): Promise<number[]> => {
+    const payments = await getPaymentsByMonth(month);
     const today = new Date();
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
     const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
@@ -73,10 +73,10 @@ export const getWeeklySpendingData = async (): Promise<number[]> => {
     return weeklyPercentages;
 };
 
-export const getPaymentsByMonth = async (month: number) => {
+export const getPaymentsByMonth = async (month: number): Promise<Payment[]> => {
     const payments = await getPayments();
     return payments.filter(payment => {
         const paymentDate = new Date(payment.date); // Convert the date string to a Date object
-        return paymentDate.getMonth() === month; // Compare the month (0-11)
+        return paymentDate.getMonth() === month - 1; // Compare the month (0-11)
     });
 };

@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [currentMonth, setCurrentMonth] = useState<number>(new Date().getMonth() + 1);
   const handleAddClick = () => {
     setIsModalOpen(true);
   };
@@ -21,21 +22,18 @@ const Dashboard = () => {
     fetchPayments();
   };
   const fetchPayments = async () => {
-    const payments = await getPayments();
+    const payments = await getPaymentsByMonth(currentMonth);
     setPayments(payments);
     setLoading(false);
   };
   useEffect(() => {
-    if(payments.length === 0){
-      fetchPayments();
-    }
-  }, [payments]);
+    fetchPayments();
+  }, [currentMonth]);
+  
   const handleMonthChange = async (month: number) => {
-    setLoading(true);
+    setCurrentMonth(month);
     const payments = await getPaymentsByMonth(month);
     setPayments(payments);
-    setLoading(false);
-    console.log(payments);
   };
   return (
     <div className="h-full overflow-y-auto p-3 bg-white shadow-md w-full">
@@ -45,8 +43,8 @@ const Dashboard = () => {
         </div>
       ) : (
         <>
-          <TotalMoney onAddClick={handleAddClick} paymentsData={payments} handleMonthChange={handleMonthChange} />
-          <SpendingOverview paymentsData={payments} />
+          <TotalMoney onAddClick={handleAddClick} paymentsData={payments} handleMonthChange={handleMonthChange} currentMonth={currentMonth} />
+          <SpendingOverview paymentsData={payments} currentMonth={currentMonth} />
           <Footer />
           <AddPaymentForm isOpen={isModalOpen} onClose={handleCloseModal} />
         </>

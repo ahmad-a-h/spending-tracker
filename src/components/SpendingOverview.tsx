@@ -8,12 +8,12 @@ import { Table } from 'antd';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,ChartDataLabels);
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-const SpendingOverview = ({ paymentsData }: { paymentsData: Payment[] }) => {
+const SpendingOverview = ({ paymentsData, currentMonth }: { paymentsData: Payment[], currentMonth: number }) => {
   const [dailySpending, setDailySpending] = useState<{ [key: string]: number }>({});
   const [weeklyData, setWeeklyData] = useState<number[]>(); // Static data for demonstration
   const [categoryTotals, setCategoryTotals] = useState<{ [key: string]: number }>({});
-  const today = new Date();
-
+  const today = new Date(currentMonth);
+  console.log("today", today);
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
@@ -21,7 +21,8 @@ const SpendingOverview = ({ paymentsData }: { paymentsData: Payment[] }) => {
     const fetchSpendingData = async () => {
       try {
         // Fetch data from Firebase
-        const response = await getWeeklySpendingData(); // Replace with your actual fetching function
+        console.log("currentMonth", currentMonth);
+        const response = await getWeeklySpendingData(currentMonth); // Replace with your actual fetching function
         setWeeklyData(response); // Update state with fetched data
         
         const spending: { [key: string]: number } = {};

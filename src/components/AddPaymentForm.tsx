@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, Button, Input, Select, Form } from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { Payment } from '../../firebase/firebaseUtils';
 
 interface AddPaymentFormProps {
@@ -12,14 +10,22 @@ interface AddPaymentFormProps {
 const AddPaymentForm: React.FC<AddPaymentFormProps> = ({ isOpen, onClose }) => {
   const [amount, setAmount] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<string>('cash');
-  const [category, setCategory] = useState<number>(0);
+  const [category, setCategory] = useState<number>(1); // Default to the first category
   const [comment, setComment] = useState<string>('');
-  
+  const [form] = Form.useForm();
+  // Reset form values when the modal opens
+  useEffect(() => {
+    if (isOpen) {
+      form.resetFields();
+    }
+  }, [isOpen]);
+
   const handleSubmit = () => {
     const values: Payment = { amount, category, notes: comment, isPayment: true, date: new Date().toISOString(), paymentMethod };
     console.log(values);
     onClose(values); // Pass the values to the onClose function
   };
+
   return (
     <Modal
       title={null}
@@ -28,7 +34,7 @@ const AddPaymentForm: React.FC<AddPaymentFormProps> = ({ isOpen, onClose }) => {
       footer={null}
       className="rounded-lg"
     >
-      <Form onFinish={handleSubmit}>
+      <Form onFinish={handleSubmit} form={form}>
         <div className="flex mb-2 w-11/12">
           <Form.Item
             name="paymentMethod"

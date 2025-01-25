@@ -14,20 +14,18 @@ interface ClickProps {
   onAddClick: () => void;
   paymentsData: Payment[];
   handleMonthChange: (month: number) => void;
+  currentMonth: number;
 }
-const TotalMoney = ({ onAddClick, paymentsData, handleMonthChange }: ClickProps) => {
+const TotalMoney = ({ onAddClick, paymentsData, handleMonthChange, currentMonth }: ClickProps) => {
   const [total, setTotal] = useState<number>(0);
-  const [selectedMonth, setSelectedMonth] = useState<number>(); // Allow null as a possible value
+  const [selectedMonth, setSelectedMonth] = useState<number>(currentMonth); // Set to current month number
   const [selectedTab, setSelectedTab] = useState<'expenses' | 'income'>('expenses'); // State for selected tab
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  // const {payments, loading} = usePayments();
-
+  
   useEffect(() => {
     const totalAmount = paymentsData.reduce((acc: number, payment: Payment) => acc + parseFloat(payment.amount), 0);
     setTotal(totalAmount);
-    console.log(paymentsData);
   }, [paymentsData]);
-
   
   return (
     <div>
@@ -59,7 +57,7 @@ const TotalMoney = ({ onAddClick, paymentsData, handleMonthChange }: ClickProps)
             </TabList>
           </TabGroup>
           <Select
-            value={selectedMonth}
+            value={currentMonth}
             onChange={(value) => {
               setSelectedMonth(value);
               handleMonthChange(value);
