@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Button, Input, Select, Form } from 'antd';
+import { Modal, Button, Input, Select, Form, DatePicker } from 'antd';
 import { Payment } from '../../firebase/firebaseUtils';
 
 interface AddPaymentFormProps {
@@ -12,6 +12,7 @@ const AddPaymentForm: React.FC<AddPaymentFormProps> = ({ isOpen, onClose }) => {
   const [paymentMethod, setPaymentMethod] = useState<string>('cash');
   const [category, setCategory] = useState<number>(1); // Default to the first category
   const [comment, setComment] = useState<string>('');
+  const [date, setDate] = useState<Date>(new Date());
   const [form] = Form.useForm();
   // Reset form values when the modal opens
   useEffect(() => {
@@ -21,7 +22,7 @@ const AddPaymentForm: React.FC<AddPaymentFormProps> = ({ isOpen, onClose }) => {
   }, [isOpen]);
 
   const handleSubmit = () => {
-    const values: Payment = { amount, category, notes: comment, isPayment: true, date: new Date().toISOString(), paymentMethod };
+    const values: Payment = { amount, category, notes: comment, isPayment: true, date: date.toISOString(), paymentMethod, id: '' };
     console.log(values);
     onClose(values); // Pass the values to the onClose function
   };
@@ -30,7 +31,7 @@ const AddPaymentForm: React.FC<AddPaymentFormProps> = ({ isOpen, onClose }) => {
     <Modal
       title={null}
       open={isOpen}
-      onCancel={() => onClose({ amount: '', category: 1, notes: '', isPayment: true, date: new Date().toISOString(), paymentMethod: '' })}
+      onCancel={() => onClose({ amount: '', category: 1, notes: '', isPayment: true, date: new Date().toISOString(), paymentMethod: '', id: '' })}
       footer={null}
       className="rounded-lg"
     >
@@ -83,17 +84,25 @@ const AddPaymentForm: React.FC<AddPaymentFormProps> = ({ isOpen, onClose }) => {
             placeholder="$0.00"
           />
         </Form.Item>
-        <Form.Item
-          name="comment"
-          rules={[{ required: true, message: 'Please add a comment!' }]}
-        >
-          <Input
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            className="text-center border-none"
-            placeholder="Add a comment..."
-          />
-        </Form.Item>
+        <div className="flex justify-center items-center">
+          <Form.Item
+            name="comment"
+            rules={[{ required: true, message: 'Please add a comment!' }]}
+          >
+            <Input
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="text-center border-none"
+              placeholder="Add a comment..."
+            />
+          </Form.Item>
+          <Form.Item
+            name="date"
+            rules={[{ required: true, message: 'Please Pick a Date!' }]}
+          >
+            <DatePicker onChange={(value) => setDate(value.toDate())} />
+          </Form.Item>  
+        </div>
         <div className="text-center mb-4">
           <Button
             type="primary"

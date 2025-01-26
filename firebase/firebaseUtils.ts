@@ -1,9 +1,10 @@
 // firebase/firebaseUtils.js
 
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, getDocs, query, where, doc, deleteDoc } from "firebase/firestore";
 import { db } from './firebase';
 
 export interface Payment {
+    id: string;
     amount: string;
     category: number;
     date: string;
@@ -79,4 +80,14 @@ export const getPaymentsByMonth = async (month: number): Promise<Payment[]> => {
         const paymentDate = new Date(payment.date); // Convert the date string to a Date object
         return paymentDate.getMonth() === month - 1; // Compare the month (0-11)
     });
+};
+
+// Function to delete a payment by ID
+export const deletePayment = async (id: string) => {
+    try {
+        await deleteDoc(doc(db, "payments", id));
+        console.log("Payment deleted!");
+    } catch (e) {
+        console.error("Error deleting payment: ", e);
+    }
 };

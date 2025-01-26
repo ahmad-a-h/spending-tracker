@@ -4,16 +4,19 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import ChartDataLabels from 'chartjs-plugin-datalabels'; // Import the data labels plugin
 import { getWeeklySpendingData, Payment } from '../../firebase/firebaseUtils';
 import { format } from 'date-fns';
-import { Table } from 'antd';
+import { Table, Button } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons'; // Import the delete icon
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend,ChartDataLabels);
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-const SpendingOverview = ({ paymentsData, currentMonth }: { paymentsData: Payment[], currentMonth: number }) => {
+const SpendingOverview = ({ paymentsData, currentMonth, handleDelete }: { paymentsData: Payment[], currentMonth: number, handleDelete: (id: string) => void }) => {
   const [dailySpending, setDailySpending] = useState<{ [key: string]: number }>({});
   const [weeklyData, setWeeklyData] = useState<number[]>(); // Static data for demonstration
   const [categoryTotals, setCategoryTotals] = useState<{ [key: string]: number }>({});
-  const today = new Date(currentMonth);
-  console.log("today", today);
+  
+  const currentYear = new Date().getFullYear(); // Get the current year
+  const today = new Date(currentYear, currentMonth - 1, 1); // Month is 0-indexed
+  
   const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 
@@ -21,7 +24,6 @@ const SpendingOverview = ({ paymentsData, currentMonth }: { paymentsData: Paymen
     const fetchSpendingData = async () => {
       try {
         // Fetch data from Firebase
-        console.log("currentMonth", currentMonth);
         const response = await getWeeklySpendingData(currentMonth); // Replace with your actual fetching function
         setWeeklyData(response); // Update state with fetched data
         
@@ -33,7 +35,6 @@ const SpendingOverview = ({ paymentsData, currentMonth }: { paymentsData: Paymen
           return acc;
         }, {} as { [key: string]: number });
         setCategoryTotals(totals);
-        
         paymentsData.forEach(payment => {
           const paymentDate = new Date(payment.date);
           const dateKey = paymentDate.toISOString().split('T')[0];
@@ -237,7 +238,7 @@ const SpendingOverview = ({ paymentsData, currentMonth }: { paymentsData: Paymen
   const sortedPayments = useMemo(() => {
     return [...currentMonthPayments].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }, [currentMonthPayments]);
-  
+
   const columns = [
     {
       title: 'Amount',
@@ -260,6 +261,13 @@ const SpendingOverview = ({ paymentsData, currentMonth }: { paymentsData: Paymen
       title: 'Notes',
       dataIndex: 'notes',
       key: 'notes',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (text: string, record: Payment) => (
+        <Button onClick={() => handleDelete(record.id)} icon={<DeleteOutlined />} danger></Button>
+      ),
     },
   ];
 

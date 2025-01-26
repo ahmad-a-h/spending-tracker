@@ -3,7 +3,7 @@ import AddPaymentForm from './AddPaymentForm';
 import TotalMoney from './TotalMoney';
 import SpendingOverview from './SpendingOverview';
 import Footer from './Footer';
-import { addPayment, getPayments, getPaymentsByMonth, Payment } from '../../firebase/firebaseUtils';
+import { addPayment, deletePayment, getPaymentsByMonth, Payment } from '../../firebase/firebaseUtils';
 import { Spin } from 'antd'; // Import Ant Design's Spin component
 
 const Dashboard = () => {
@@ -35,6 +35,10 @@ const Dashboard = () => {
     const payments = await getPaymentsByMonth(month);
     setPayments(payments);
   };
+  const handleDelete = async (id: string) => {
+    await deletePayment(id); // Call the delete function
+    fetchPayments();
+  };
   return (
     <div className="h-full overflow-y-auto p-3 bg-white shadow-md w-full">
       {loading ? (
@@ -44,9 +48,9 @@ const Dashboard = () => {
       ) : (
         <>
           <TotalMoney onAddClick={handleAddClick} paymentsData={payments} handleMonthChange={handleMonthChange} currentMonth={currentMonth} />
-          <SpendingOverview paymentsData={payments} currentMonth={currentMonth} />
+          <SpendingOverview paymentsData={payments} currentMonth={currentMonth} handleDelete={handleDelete} />
           <Footer />
-          <AddPaymentForm isOpen={isModalOpen} onClose={handleCloseModal} />
+          <AddPaymentForm isOpen={isModalOpen} onClose={handleCloseModal}/>
         </>
       )}
     </div>
